@@ -1,19 +1,10 @@
-import numpy as np
-from keras import layers
-from keras.layers import Input, Add, Dense, Activation, ZeroPadding2D, BatchNormalization, Flatten, Conv2D, AveragePooling2D, MaxPooling2D, GlobalMaxPooling2D
-from keras.models import Model, load_model
-from keras.preprocessing import image
-from keras.utils import layer_utils
-from keras.utils.data_utils import get_file
-from keras.applications.imagenet_utils import preprocess_input
+from keras.layers import Input, Add, Dense, Activation, ZeroPadding2D, BatchNormalization, Flatten, Conv2D, AveragePooling2D, MaxPooling2D
+from keras.models import Model
 # import pydot
 # from IPython.display import SVG
-from keras.utils.vis_utils import model_to_dot
-from keras.utils import plot_model
-from resnets_utils import *
-from resize_image import *
+from CNN_Model.resnets_utils import *
+from CNN_Model.resize_image import *
 from keras.initializers import glorot_uniform
-import scipy.misc
 # from matplotlib.pyplot import imshow
 # %matplotlib inline
 
@@ -195,26 +186,32 @@ def ResNet50(input_shape=(64, 64, 3), classes=6):
 # change this block
 model = ResNet50(input_shape = (480, 480, 3), classes = 3)
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-X_train_orig, Y_train_orig, X_test_orig, Y_test_orig, classes = load_covidx_dataset()
+
+# X_train_orig, Y_train_orig, X_test_orig, Y_test_orig, classes = load_covidx_dataset()
+
+amount_list_train = [1000, 1500, 150]
+X_train_orig, Y_train_orig, classes = load_covidx_training_dataset(amount_list_train)
 
 # Normalize image vectors
-X_train = X_train_orig/255.
-X_test = X_test_orig/255.
+X_train = X_train_orig / 255.
 
 # and change here
 # Convert training and test labels to one hot matrices
 Y_train = convert_to_one_hot(Y_train_orig, 3).T
-Y_test = convert_to_one_hot(Y_test_orig, 3).T
 
-print ("number of training examples = " + str(X_train.shape[0]))
-print ("number of test examples = " + str(X_test.shape[0]))
-print ("X_train shape: " + str(X_train.shape))
-print ("Y_train shape: " + str(Y_train.shape))
-print ("X_test shape: " + str(X_test.shape))
-print ("Y_test shape: " + str(Y_test.shape))
+print("number of training examples = " + str(X_train.shape[0]))
+print("X_train shape: " + str(X_train.shape))
+print("Y_train shape: " + str(Y_train.shape))
 
-model.fit(X_train, Y_train, epochs = 1, batch_size = 32)
 
-preds = model.evaluate(X_test, Y_test)
-print ("Loss = " + str(preds[0]))
-print ("Test Accuracy = " + str(preds[1]))
+epochs = 10
+batch_size = 2
+
+model.fit(X_train, Y_train, epochs=epochs, batch_size=batch_size)
+
+model.save("model_result_epochs{}_batchsize{}_dataset{}_{}_{}.h5".format(
+    epochs, batch_size, amount_list_train[0], amount_list_train[1], amount_list_train[2]))
+
+# preds = model.evaluate(X_test, Y_test)
+# print ("Loss = " + str(preds[0]))
+# print ("Test Accuracy = " + str(preds[1]))

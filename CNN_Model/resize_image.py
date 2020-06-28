@@ -9,14 +9,17 @@ import random
 '''
 You should modify the file path here
 '''
-read_path_test = "/Users/zihaoliu/Desktop/Graduate_UW/SYDE660/CNN/data/test"
-save_path_test = "/Users/zihaoliu/Desktop/Graduate_UW/SYDE660/CNN/data/test_resize"
+base_path = "G:\\training_data"
+# base_path = "/Users/zihaoliu/Desktop/Graduate_UW/SYDE660/CNN/data/"
 
-read_path_train = "/Users/zihaoliu/Desktop/Graduate_UW/SYDE660/CNN/data/train"
-save_path_train = "/Users/zihaoliu/Desktop/Graduate_UW/SYDE660/CNN/data/train_resize"
+read_path_test = "{}/test".format(base_path)
+save_path_test = "{}/test_resize".format(base_path)
 
-txt_train_file = "/Users/zihaoliu/Desktop/Graduate_UW/SYDE660/CNN/data/train_split_v3.txt"
-txt_test_file = "/Users/zihaoliu/Desktop/Graduate_UW/SYDE660/CNN/data/test_split_v3.txt"
+read_path_train = "{}/train".format(base_path)
+save_path_train = "{}/train_resize".format(base_path)
+
+txt_train_file = "{}/train_split_v3.txt".format(base_path)
+txt_test_file = "{}/test_split_v3.txt".format(base_path)
 
 
 def resize_image(read_path, save_path, resulution):
@@ -136,6 +139,21 @@ def load_covidx_dataset(amount_list_train = [200, 200, 200], amount_list_test = 
     print("%d samples in testing set generation done" % (sum(amount_list_test)))
     classes = np.array((0, 1, 2))
     return train_X, train_y, test_X, test_y, classes
+
+
+def load_covidx_training_dataset(amount_list_train):
+    train_X, train_y = get_new_dataset(txt_train_file, save_path_train, amount_list_train)
+    print("%d samples in training set generation done" % (sum(amount_list_train)))
+    classes = np.array((0, 1, 2))
+    return train_X, train_y, classes
+
+
+def load_covidx_testing_dataset(amount_list_test):
+    test_X, test_y = get_new_dataset(txt_test_file, save_path_test, amount_list_test)
+    print("%d samples in testing set generation done" % (sum(amount_list_test)))
+    classes = np.array((0, 1, 2))
+    return test_X, test_y, classes
+
 
 def convert_to_one_hot_matrix(Y, C):
     '''

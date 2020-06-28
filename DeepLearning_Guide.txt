@@ -1,0 +1,32 @@
+1.配置TensorFlow-GPU版本环境
+    需要python3.7, Anaconda科学计算环境，GPU计算能力大于3.5（兄弟你的1060没问题，
+    https://developer.nvidia.com/cuda-gpus可查询GPU算力）
+	https://blog.csdn.net/mooe1011/article/details/89302020(有详细过程)
+	a. 安装CUDA （一定是10.1版本，其他版本安装后还需要后期配置其他环境的包儿）
+	b.安装cuDNN （需注册NVIDA账号，注册后，根据CUDA版本，下载cuDNN v7.6.5版本）
+	c.安装完毕CUDA和cuDNN后，可直接在pycharm中的project interpreter中下载tensorflow-gpu
+	tensorflow-gpu的下载安装过程可能会花一些时间
+    安装完毕之后在python console中输入import tensorflow as tf，大概率会报错缺失什么文件（凸(艹皿艹 )）
+    可在Stack Overflow上查询。
+
+2.下载数据集： https://drive.google.com/file/d/18RgmpZ2YZd-Wu-mkHF30nseR0gSYehYv/view?usp=sharing
+    数据量大概四个G，其中包括train_resize, test_resize和两个txt文件（用于统计每个图像的类别）
+
+3.CNN代码： https://github.com/ZihaoVLiu/CNN_Model
+    本神经网络建立的目的是为了实现将输入胸部x光图像分类为：pneumonia（普通肺炎）normal（健康）和COVID-19三种类型
+    首先通过CNN对训练集进行训练，建立model（会花费很长时间），然后使用训练好的model对测试集进行预测
+    最终对分类集的accuracy结果可能因为训练集的大小，图像的分辨率，梯度下降等方法而存在差异（可对提到参数进行更改）
+
+    其中testCode.py是CNN网络，可直接运行（可自行更改216行的epoch数量可改为25-50之间，是对全体训练集的训练次数为25-50次
+     batch_size可改为64，就是每次读取进memory进行训练的图像数，我之前使用32，是因为内存不够，不能同时处理64张480*480的图像）。
+
+    其中resnets_utils.py提供一些testCode.py运行所需函数。
+
+    其中resize_image.py可实现对images的resize预处理（已经与处理好，下载的数据集就是经过resize为分辨率480*480的图像）
+    请务必更改13和16行，save_path_test和save_path_train的地址为第二步数据集的地址
+    resize中load_covid_dataset()函数为testCode.py提供整理好的训练集和测试集 np.array 格式数据
+    训练集共有5459 pneumonia，7966 normal， 473 COVID-19
+    测试集共有594 pneumonia，885 normal， 100 COVID-19，可在load_covid_dataset()函数自行调节输入数量（但不得超过提到的每个类别的图像个数）
+    我之前设置的是测试集200，200，200（分别对应pneumonia， normal和COVID-19），训练集20，20，20，
+    兄弟可以先按照这个跑一下，看看训练速度如何，如果快可以增加size。
+    
